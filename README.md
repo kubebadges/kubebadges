@@ -7,7 +7,7 @@
 ![GitHub license](https://img.shields.io/github/license/kubebadges/kubebadges)
 
 ## What is KubeBadges
-KubeBadges is an open-source Kubernetes status display display tool designed to provide concise, intuitive status badges for services within Kubernetes. It offers instant status feedback while reducing external dependencies and complexity.
+KubeBadges is an open-source Kubernetes status display tool designed to provide concise, intuitive status badges for services within Kubernetes. It offers instant status feedback while reducing external dependencies and complexity.
 
 ![screenshot](docs/images/index.png)
 

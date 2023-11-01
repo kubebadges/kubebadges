@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubebadges-role
+  namespace: kubebadges
+rules:
+  - verbs:
+      - "*"
+    apiGroups:
+      - kubebadges.tcode.ltd
+    resources:
+      - kubebadges

@@ -1,0 +1,15 @@
+apiVersion: kubebadges.tcode.ltd/v1
+kind: KubeBadge
+metadata:
+  name: my-kubebadge
+  namespace: default
+spec:
+  type: Gold
+  originalURL: "https://example.com/original-badge"
+  allowed: true
+  aliasURL: "https://example.com/alias-badge"
+  displayName: "My Badge"
+  custom:
+    type: "customType"
+    address: "customAddress"
+    port: 8080

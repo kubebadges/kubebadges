@@ -1,0 +1,295 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubebadges
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.13.0
+  name: kubebadges.kubebadges.tcode.ltd
+spec:
+  group: kubebadges.tcode.ltd
+  names:
+    kind: KubeBadge
+    listKind: KubeBadgeList
+    plural: kubebadges
+    shortNames:
+    - kubebadge
+    singular: kubebadge
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.type
+      name: Type
+      type: string
+    - jsonPath: .spec.originalURL
+      name: OriginalURL
+      type: string
+    - jsonPath: .spec.displayName
+      name: DisplayName
+      type: string
+    - jsonPath: .spec.ownerNamespace
+      name: OwnerNamespace
+      type: string
+    - jsonPath: .spec.allowed
+      name: Allowed
+      type: boolean
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: KubeBadge is the Schema for the kubebadges API.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: KubeBadgeSpec defines the desired state of KubeBadge.
+            properties:
+              aliasURL:
+                type: string
+              allowed:
+                type: boolean
+              custom:
+                properties:
+                  address:
+                    type: string
+                  port:
+                    type: integer
+                  type:
+                    type: string
+                type: object
+              displayName:
+                type: string
+              originalURL:
+                type: string
+              ownerNamespace:
+                type: string
+              type:
+                type: string
+            required:
+            - allowed
+            - originalURL
+            - type
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubebadges
+  namespace: kubebadges
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubebadges-role
+  namespace: kubebadges
+rules:
+- apiGroups:
+  - kubebadges.tcode.ltd
+  resources:
+  - kubebadges
+  verbs:
+  - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubebadges
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubebadges-rolebinding
+  namespace: kubebadges
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubebadges-role
+subjects:
+- kind: ServiceAccount
+  name: kubebadges
+  namespace: kubebadges
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubebadges-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubebadges
+subjects:
+- kind: ServiceAccount
+  name: kubebadges
+  namespace: kubebadges
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubebadges
+  namespace: kubebadges
+spec:
+  ports:
+  - name: http-external
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: http-internal
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: kubebadges
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shields
+  namespace: kubebadges
+spec:
+  ports:
+  - name: http-shields
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: shields
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kubebadges
+  name: kubebadges
+  namespace: kubebadges
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: kubebadges
+  template:
+    metadata:
+      labels:
+        app: kubebadges
+    spec:
+      containers:
+      - env:
+        - name: SHIELDS_HOST
+          value: shields:8080
+        - name: SHIELDS_SCHEME
+          value: http
+        - name: CACHE_TIME
+          value: "300"
+        - name: BADGE_CACHE_TIME
+          value: "300"
+        image: neosu/kubebadges:v0.0.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 1
+        name: kubebadges
+        ports:
+        - containerPort: 8090
+          name: http-internal
+          protocol: TCP
+        - containerPort: 8080
+          name: http-external
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 8Mi
+        startupProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 1
+      restartPolicy: Always
+      serviceAccount: kubebadges
+      serviceAccountName: kubebadges
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shields
+  name: shields
+  namespace: kubebadges
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: shields
+  template:
+    metadata:
+      labels:
+        app: shields
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "8080"
+        image: shieldsio/shields:next
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 1
+        name: shieldsio
+        ports:
+        - containerPort: 8080
+          name: tcp-http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

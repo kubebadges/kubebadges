@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubebadges
+  namespace: kubebadges
+  labels:
+    app: kubebadges
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: kubebadges
+  template:
+    metadata:
+      labels:
+        app: kubebadges
+    spec:
+      containers:
+        - name: kubebadges
+          image: neosu/kubebadges:v0.0.3
+          ports:
+            - name: http-internal
+              containerPort: 8090
+              protocol: TCP
+            - name: http-external
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: SHIELDS_HOST
+              value: shields:8080
+            - name: SHIELDS_SCHEME
+              value: http
+            - name: CACHE_TIME
+              value: "300"
+            - name: BADGE_CACHE_TIME
+              value: "300"
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 8Mi
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: kubebadges
+      serviceAccount: kubebadges

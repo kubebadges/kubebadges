@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:ui/app/config/constant.dart';
 import 'package:ui/app/model/model.dart';
@@ -29,5 +31,17 @@ class Api extends GetConnect {
 
   Future<Response> updateBadge(Map<String, dynamic> data) {
     return post('/api/badge', data);
+  }
+
+  Future<Response<KubeBadgeConfig>> getBadgeConfig() {
+    return get('/api/config', decoder: (data) {
+      return KubeBadgeConfig.fromJson(data);
+    });
+  }
+
+  Future<Response<KubeBadgeConfig>> updateBadgeConfig(KubeBadgeConfig data) {
+    return post('/api/config', jsonEncode(data), decoder: (data) {
+      return KubeBadgeConfig.fromJson(data);
+    });
   }
 }

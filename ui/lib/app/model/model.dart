@@ -39,3 +39,31 @@ class KubeBadge {
     );
   }
 }
+
+class KubeBadgeConfig {
+  final String badgeBaseURL;
+
+  KubeBadgeConfig({
+    required this.badgeBaseURL,
+  });
+
+  factory KubeBadgeConfig.fromJson(Map<String, dynamic> json) {
+    return KubeBadgeConfig(
+      badgeBaseURL: json['badge_base_url'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "badge_base_url": badgeBaseURL,
+    };
+  }
+
+  copyWith({
+    String? badgeBaseURL,
+  }) {
+    return KubeBadgeConfig(
+      badgeBaseURL: badgeBaseURL ?? this.badgeBaseURL,
+    );
+  }
+}

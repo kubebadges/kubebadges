@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ui/app/api/api.dart';
 import 'package:ui/app/routes/app_pages.dart';
+import 'package:ui/app/service/app_service.dart';
 import 'package:ui/app/ui/pages/index/index_binding.dart';
 import 'package:ui/app/ui/pages/index/index_page.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -21,5 +22,6 @@ Future<void> main() async {
 }
 
 Future<void> initServices() async {
+  Get.lazyPut(() => AppService());
   Get.lazyPut(() => Api());
 }

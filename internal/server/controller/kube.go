@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -211,4 +212,52 @@ func (s *KubeController) populateKubeBadges(c *gin.Context, result []model.KubeB
 	wg.Wait()
 
 	c.JSON(http.StatusOK, newResult)
+}
+
+func (s *KubeController) GetConfig(c *gin.Context) {
+	configMap, err := s.KubeHelper.GetOrCreateConfig()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, s.mapToConfig(configMap.Data))
+}
+
+func (s *KubeController) UpdateConfig(c *gin.Context) {
+	var kubeBadgeConfig model.KubeBadgesConfig
+	if err := c.ShouldBindJSON(&kubeBadgeConfig); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	configMap, err := s.KubeHelper.GetOrCreateConfig()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	configMap.Data = s.configToMap(&kubeBadgeConfig)
+
+	configMap, err = s.KubeHelper.UpdateConfig(configMap)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, s.mapToConfig(configMap.Data))
+}
+
+func (s *KubeController) configToMap(config *model.KubeBadgesConfig) map[string]string {
+	jsonData, _ := json.Marshal(config)
+	var configMap map[string]string
+	json.Unmarshal(jsonData, &configMap)
+	return configMap
+}
+
+func (s *KubeController) mapToConfig(configMap map[string]string) *model.KubeBadgesConfig {
+	jsonData, _ := json.Marshal(configMap)
+	var config model.KubeBadgesConfig
+	json.Unmarshal(jsonData, &config)
+	return &config
 }

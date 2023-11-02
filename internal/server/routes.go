@@ -87,6 +87,8 @@ func (s *Server) initRouter() {
 		api.GET("/namespaces", kubeController.ListNamespaces)
 		api.GET("/deployments/:namespace", kubeController.ListDeployments)
 		api.POST("/badge", kubeController.UpdateBadge)
+		api.GET("/config", kubeController.GetConfig)
+		api.POST("/config", kubeController.UpdateConfig)
 	}
 
 	badges := s.internalEngine.Group("/badges")

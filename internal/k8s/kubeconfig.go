@@ -11,6 +11,10 @@ import (
 func (k *KubeHelper) GetOrCreateConfig() (*v1.ConfigMap, error) {
 	configMap, err := k.client.CoreV1().ConfigMaps(config.KubeBadgeNamespace).Get(context.Background(), config.KubeBadgeConfigName, metav1.GetOptions{})
 	if err == nil {
+		if configMap.Data == nil {
+			configMap.Data = map[string]string{}
+		}
+
 		return configMap, nil
 	}
 
@@ -24,6 +28,10 @@ func (k *KubeHelper) GetOrCreateConfig() (*v1.ConfigMap, error) {
 	configMap, err = k.client.CoreV1().ConfigMaps(config.KubeBadgeNamespace).Create(context.Background(), configMap, metav1.CreateOptions{})
 	if err != nil {
 		return nil, err
+	}
+
+	if configMap.Data == nil {
+		configMap.Data = map[string]string{}
 	}
 
 	return configMap, nil

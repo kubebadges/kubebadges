@@ -52,7 +52,7 @@ func (s *KubeController) ListNodes(c *gin.Context) {
 		s.cache.Set("nodes", result, time.Minute*60)
 	}
 
-	s.populateKubeBadges(c, result)
+	c.JSON(http.StatusOK, s.populateKubeBadges(result))
 }
 
 func (s *KubeController) ListNamespaces(c *gin.Context) {
@@ -79,7 +79,7 @@ func (s *KubeController) ListNamespaces(c *gin.Context) {
 		s.cache.Set("namespace", result, time.Minute*5)
 	}
 
-	s.populateKubeBadges(c, result)
+	c.JSON(http.StatusOK, s.populateKubeBadges(result))
 }
 
 func (s *KubeController) ListDeployments(c *gin.Context) {
@@ -108,7 +108,30 @@ func (s *KubeController) ListDeployments(c *gin.Context) {
 		s.cache.Set(fmt.Sprintf("deployment_%s", namespace), result, time.Minute*2)
 	}
 
-	s.populateKubeBadges(c, result)
+	c.JSON(http.StatusOK, s.populateKubeBadges(result))
+}
+
+func (s *KubeController) populateKubeBadges(result []model.KubeBadges) []model.KubeBadges {
+	var wg sync.WaitGroup
+	newResult := make([]model.KubeBadges, len(result))
+
+	for i := range result {
+		wg.Add(1)
+		go func(index int) {
+			defer wg.Done()
+			newBadge := result[index]
+			kubeBadge, err := s.KubeBadgesService.GetKubeBadge(result[index].Key, false)
+			if err == nil {
+				newBadge.Allowed = kubeBadge.Spec.Allowed
+				newBadge.DisplayName = kubeBadge.Spec.DisplayName
+				newBadge.AliasURL = kubeBadge.Spec.AliasURL
+			}
+			newResult[index] = newBadge
+		}(i)
+	}
+	wg.Wait()
+
+	return newResult
 }
 
 type UpdateBadgeRequest struct {
@@ -188,29 +211,6 @@ func (s *KubeController) parseKey(key string) (resourceType string, namespace st
 	}
 
 	return
-}
-
-func (s *KubeController) populateKubeBadges(c *gin.Context, result []model.KubeBadges) {
-	var wg sync.WaitGroup
-	newResult := make([]model.KubeBadges, len(result))
-
-	for i := range result {
-		wg.Add(1)
-		go func(index int) {
-			defer wg.Done()
-			newBadge := result[index]
-			kubeBadge, err := s.KubeBadgesService.GetKubeBadge(result[index].Key, false)
-			if err == nil {
-				newBadge.Allowed = kubeBadge.Spec.Allowed
-				newBadge.DisplayName = kubeBadge.Spec.DisplayName
-				newBadge.AliasURL = kubeBadge.Spec.AliasURL
-			}
-			newResult[index] = newBadge
-		}(i)
-	}
-	wg.Wait()
-
-	c.JSON(http.StatusOK, newResult)
 }
 
 func (s *KubeController) GetConfig(c *gin.Context) {

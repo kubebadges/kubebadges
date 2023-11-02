@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kubebadges/kubebadges/internal/service"
+	v1 "github.com/kubebadges/kubebadges/pkg/apis/kubebadges/v1"
 )
 
 var unauthorizedSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="114" height="20" role="img" aria-label="404: Unauthorized">
@@ -31,7 +31,11 @@ var unauthorizedSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http
 </svg>
 `
 
-func BadgeApiAccessMiddleware(kubeService *service.KubeBadgesService) gin.HandlerFunc {
+type KubeBadgeService interface {
+	GetKubeBadge(key string, b bool) (*v1.KubeBadge, error)
+}
+
+func BadgeApiAccessMiddleware(kubeService KubeBadgeService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		c.Header("X-App-Name", "KubeBadge")

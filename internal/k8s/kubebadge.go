@@ -15,7 +15,7 @@ import (
 )
 
 func (k *KubeHelper) kubebadge() typev1.KubeBadgeInterface {
-	return k.kubeBadgeClient.KubebadgesV1().KubeBadges(config.KubeBadgeCRDNamespace)
+	return k.kubeBadgeClient.KubebadgesV1().KubeBadges(config.KubeBadgeNamespace)
 }
 
 func (k *KubeHelper) GenerateKubeName(name string) string {
@@ -51,7 +51,7 @@ func (k *KubeHelper) CreateKubeBadge(spec v1.KubeBadgeSpec) (*v1.KubeBadge, erro
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      k.GenerateKubeName(spec.OriginalURL),
-			Namespace: config.KubeBadgeCRDNamespace,
+			Namespace: config.KubeBadgeNamespace,
 			Labels: map[string]string{
 				v1.KubeBadgeLabelType:           spec.Type,
 				v1.KubeBadgeLabelAllowed:        strconv.FormatBool(spec.Allowed),
@@ -85,7 +85,7 @@ func (k *KubeHelper) DeleteKubeBadge(name string) error {
 func (k *KubeHelper) NewKubeBadgeInformer() cache.SharedIndexInformer {
 	return informers.NewKubeBadgeInformer(
 		k.kubeBadgeClient,
-		config.KubeBadgeCRDNamespace,
+		config.KubeBadgeNamespace,
 		24*time.Hour,
 		cache.Indexers{},
 	)

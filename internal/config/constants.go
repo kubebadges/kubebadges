@@ -1,7 +1,8 @@
 package config
 
 const (
+	KubeBadgeNamespace     = "kubebadges"
+	KubeBadgeConfigName    = "kubebadge-config"
 	KubeBadgeCRDKind       = "KubeBadge"
-	KubeBadgeCRDNamespace  = "kubebadges"
 	KubeBadgeCRDAPIVersion = "kubebadges.tcode.ltd/v1"
 )

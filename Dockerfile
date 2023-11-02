@@ -5,7 +5,7 @@ COPY ui /ui
 WORKDIR /ui
 
 RUN flutter pub get
-RUN flutter build web --dart-define=BUILD_TYPE=prod --build-name=0.0.3 --tree-shake-icons --pwa-strategy none --web-renderer html --release
+RUN flutter build web --dart-define=BUILD_TYPE=prod --tree-shake-icons --pwa-strategy none --web-renderer html --release
 
 # build golang stage
 FROM golang:1.21.3 AS go-builder

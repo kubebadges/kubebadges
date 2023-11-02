@@ -112,10 +112,10 @@ func (s *KubeController) ListDeployments(c *gin.Context) {
 }
 
 type UpdateBadgeRequest struct {
-	Key         string  `json:"key"`
-	Allowed     *bool   `json:"allowed"`
 	DisplayName *string `json:"display_name"`
 	Alias       *string `json:"alias"`
+	Allowed     *bool   `json:"allowed"`
+	Key         string  `json:"key"`
 }
 
 func (s *KubeController) UpdateBadge(c *gin.Context) {
@@ -185,7 +185,6 @@ func (s *KubeController) parseKey(key string) (resourceType string, namespace st
 		resourceType = "pod"
 		namespace = segments[3]
 		name = segments[4]
-
 	}
 
 	return
@@ -251,13 +250,13 @@ func (s *KubeController) UpdateConfig(c *gin.Context) {
 func (s *KubeController) configToMap(config *model.KubeBadgesConfig) map[string]string {
 	jsonData, _ := json.Marshal(config)
 	var configMap map[string]string
-	json.Unmarshal(jsonData, &configMap)
+	_ = json.Unmarshal(jsonData, &configMap)
 	return configMap
 }
 
 func (s *KubeController) mapToConfig(configMap map[string]string) *model.KubeBadgesConfig {
 	jsonData, _ := json.Marshal(configMap)
 	var config model.KubeBadgesConfig
-	json.Unmarshal(jsonData, &config)
+	_ = json.Unmarshal(jsonData, &config)
 	return &config
 }

@@ -25,4 +25,7 @@ FROM alpine:latest
 WORKDIR /app
 COPY --from=go-builder /app/cmd/kubebadges/main /app/main
 RUN chmod +x /app/main
+
+EXPOSE 8080 8090
+
 CMD ["/app/main"]

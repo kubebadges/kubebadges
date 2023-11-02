@@ -45,14 +45,7 @@ func BadgeApiAccessMiddleware(kubeService *service.KubeBadgesService) gin.Handle
 
 		key := strings.TrimPrefix(c.Request.URL.Path, "/badges")
 		kubeBadge, err := kubeService.GetKubeBadge(key, false)
-		if err != nil {
-			c.Header("Content-Type", "image/svg+xml")
-			c.String(http.StatusUnauthorized, unauthorizedSvg)
-			c.Abort()
-			return
-		}
-
-		if !kubeBadge.Spec.Allowed {
+		if err != nil || !kubeBadge.Spec.Allowed {
 			c.Header("Content-Type", "image/svg+xml")
 			c.String(http.StatusUnauthorized, unauthorizedSvg)
 			c.Abort()

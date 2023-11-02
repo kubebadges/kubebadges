@@ -21,8 +21,8 @@ const (
 )
 
 type queueEvent struct {
-	action    string
 	kubebadge *v1.KubeBadge
+	action    string
 }
 
 type KubeBadgesService struct {
@@ -47,7 +47,7 @@ func NewKubeBadgesService(kubeHelper *k8s.KubeHelper) *KubeBadgesService {
 }
 
 func (k *KubeBadgesService) init() {
-	k.informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	_, _ = k.informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			if value, ok := obj.(*v1.KubeBadge); ok {
 

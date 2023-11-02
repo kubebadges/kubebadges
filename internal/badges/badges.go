@@ -12,6 +12,12 @@ import (
 	"github.com/kubebadges/kubebadges/internal/config"
 )
 
+const (
+	AppNameHeader = "X-App-Name"
+	AppName       = "KubeBadge"
+	AccessControl = "Access-Control-Allow-Origin"
+)
+
 type BadgesHelper struct {
 	targetHOST   string
 	targetScheme string
@@ -26,14 +32,15 @@ func NewBadgesHelper(config *config.Config) *BadgesHelper {
 	}
 }
 
-func (b *BadgesHelper) CreateBadgeProxy(badge *BadgeBuilder, c *gin.Context) {
-	label := strings.ReplaceAll(badge.Label, "-", "--")
-	label = strings.ReplaceAll(label, "_", "__")
-	label = strings.ReplaceAll(label, " ", "_")
+func formatString(s string) string {
+	s = strings.ReplaceAll(s, "-", "--")
+	s = strings.ReplaceAll(s, "_", "__")
+	return strings.ReplaceAll(s, " ", "_")
+}
 
-	message := strings.ReplaceAll(badge.Message, "-", "--")
-	message = strings.ReplaceAll(message, "_", "__")
-	message = strings.ReplaceAll(message, " ", "_")
+func (b *BadgesHelper) CreateBadgeProxy(badge *BadgeBuilder, c *gin.Context) {
+	label := formatString(badge.Label)
+	message := formatString(badge.Message)
 
 	badgeURL := &url.URL{
 		Scheme: b.targetScheme,
@@ -60,7 +67,7 @@ func (b *BadgesHelper) CreateBadgeProxy(badge *BadgeBuilder, c *gin.Context) {
 		},
 	}
 
-	c.Writer.Header().Set("X-App-Name", "KubeBadge")
-	c.Writer.Header().Del("Access-Control-Allow-Origin")
+	c.Writer.Header().Set(AppNameHeader, AppName)
+	c.Writer.Header().Del(AccessControl)
 	proxy.ServeHTTP(c.Writer, c.Request)
 }

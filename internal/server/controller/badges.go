@@ -70,7 +70,7 @@ func (s *BadgesController) Node(c *gin.Context) {
 			badgeMessage.Message = "NotReady"
 		}
 
-		s.nodeCache.Set(name, badgeMessage, time.Duration(s.Config.CacheTime)*time.Second)
+		s.nodeCache.Set(name, badgeMessage, s.getCacheDuration())
 	}
 
 	s.Success(c, s.KubeBadgesService, badgeMessage)
@@ -100,7 +100,7 @@ func (s *BadgesController) Namespace(c *gin.Context) {
 		default:
 			badgeMessage.MessageColor = badges.Blue
 		}
-		s.namespaceCache.Set(name, badgeMessage, time.Duration(s.Config.CacheTime)*time.Minute)
+		s.namespaceCache.Set(name, badgeMessage, s.getCacheDuration())
 	}
 
 	s.Success(c, s.KubeBadgesService, badgeMessage)
@@ -160,7 +160,7 @@ func (s *BadgesController) Deployment(c *gin.Context) {
 		}
 
 		badgeMessage.Message = fmt.Sprintf("%d/%d %s", deployment.Status.AvailableReplicas, deployment.Status.Replicas, statusMessage)
-		s.namespaceCache.Set(fmt.Sprintf("%s_%s", namespace, deploymentName), badgeMessage, time.Duration(s.Config.CacheTime)*time.Second)
+		s.namespaceCache.Set(fmt.Sprintf("%s_%s", namespace, deploymentName), badgeMessage, s.getCacheDuration())
 	}
 
 	s.Success(c, s.KubeBadgesService, badgeMessage)
@@ -198,8 +198,12 @@ func (s *BadgesController) Pod(c *gin.Context) {
 			badgeMessage.MessageColor = badges.Blue
 		}
 
-		s.podCache.Set(fmt.Sprintf("%s_%s", namespace, podName), badgeMessage, time.Duration(s.Config.CacheTime)*time.Second)
+		s.podCache.Set(fmt.Sprintf("%s_%s", namespace, podName), badgeMessage, s.getCacheDuration())
 	}
 
 	s.Success(c, s.KubeBadgesService, badgeMessage)
+}
+
+func (s *BadgesController) getCacheDuration() time.Duration {
+	return time.Duration(s.Config.CacheTime) * time.Second
 }

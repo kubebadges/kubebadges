@@ -35,28 +35,33 @@ func registerStaticFiles(router *gin.Engine, fs embed.FS, root string) {
 		if entry.IsDir() {
 			registerStaticFiles(router, fs, root+"/"+entry.Name())
 		} else {
-			filePath := root + "/" + entry.Name()
-			mineType, mineTypeOK := getContentType(filePath)
-			if filePath == "web/index.html" {
-				router.GET("/", func(c *gin.Context) {
-					data, _ := kubebadges.WebFiles.ReadFile(filePath)
-					if mineTypeOK {
-						c.Data(http.StatusOK, mineType, data)
-					} else {
-						c.Data(http.StatusOK, http.DetectContentType(data), data)
-					}
-				})
-			}
-			router.GET("/"+strings.TrimPrefix(filePath, "web/"), func(c *gin.Context) {
-				c.Header("Cache-Control", "public, max-age=300")
-				data, _ := fs.ReadFile(filePath)
-				if mineTypeOK {
-					c.Data(http.StatusOK, mineType, data)
-				} else {
-					c.Data(http.StatusOK, http.DetectContentType(data), data)
-				}
-			})
+			registerFile(router, fs, root, entry.Name())
 		}
+	}
+}
+
+func registerFile(router *gin.Engine, fs embed.FS, root, fileName string) {
+	filePath := root + "/" + fileName
+	mineType, mineTypeOK := getContentType(filePath)
+
+	if filePath == "web/index.html" {
+		router.GET("/", func(c *gin.Context) {
+			serveFile(c, fs, filePath, mineType, mineTypeOK)
+		})
+	}
+
+	router.GET("/"+strings.TrimPrefix(filePath, "web/"), func(c *gin.Context) {
+		c.Header("Cache-Control", "public, max-age=300")
+		serveFile(c, fs, filePath, mineType, mineTypeOK)
+	})
+}
+
+func serveFile(c *gin.Context, fs embed.FS, filePath, mineType string, mineTypeOK bool) {
+	data, _ := fs.ReadFile(filePath)
+	if mineTypeOK {
+		c.Data(http.StatusOK, mineType, data)
+	} else {
+		c.Data(http.StatusOK, http.DetectContentType(data), data)
 	}
 }
 

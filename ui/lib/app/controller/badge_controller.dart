@@ -1,10 +1,10 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:ui/app/api/api.dart';
 import 'package:ui/app/model/model.dart';
+import 'package:ui/app/service/app_service.dart';
 
 class BadgeController extends GetxController {
-  Api api = Get.find();
+  AppService appService = Get.find();
 
   final _nodeList = <KubeBadge>[].obs;
   List<KubeBadge> get nodeList => _nodeList;
@@ -26,7 +26,7 @@ class BadgeController extends GetxController {
 
   void listNodes(bool force) async {
     namespaceList.clear();
-    var response = await api.listNodes(force);
+    var response = await appService.listNodes(force);
     if (!response.status.hasError) {
       nodeList = response.body!;
     }
@@ -35,13 +35,13 @@ class BadgeController extends GetxController {
   void listNamespace(bool force) async {
     EasyLoading.show(status: 'Loading...');
     namespaceList.clear();
-    var namespaces = await api.listNamespace(force);
+    var namespaces = await appService.listNamespace(force);
     if (!namespaces.status.hasError) {
       var temp = <KubeBadge, List<KubeBadge>>{};
       var deploymentsRequests = <Future>[];
       for (var namespace in namespaces.body!) {
         deploymentsRequests.add(
-          api.listDeployments(namespace.name, force).then((deployments) {
+          appService.listDeployments(namespace.name, force).then((deployments) {
             if (!deployments.status.hasError) {
               if (deployments.body!.isNotEmpty) {
                 temp[namespace] = deployments.body!;
@@ -58,7 +58,7 @@ class BadgeController extends GetxController {
 
   Future<bool> updateBadgePublic(KubeBadge kubeBadge, bool allowed) async {
     EasyLoading.show(status: 'Loading...');
-    var response = await api.updateBadge({
+    var response = await appService.updateBadge({
       "key": kubeBadge.key,
       "allowed": allowed,
     });
@@ -94,5 +94,9 @@ class BadgeController extends GetxController {
       toastPosition: EasyLoadingToastPosition.bottom,
     );
     return true;
+  }
+
+  String getBadgeBaseURL() {
+    return appService.getBadgeBaseURL();
   }
 }

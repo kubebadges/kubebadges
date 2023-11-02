@@ -38,7 +38,9 @@ class _BadgeSettingDialogState extends State<BadgeSettingDialog> {
           padding: const EdgeInsets.only(right: 8, bottom: 8, left: 8),
           child: TextButton(
             onPressed: () {
-              FlutterClipboard.copy(widget.kubeBadge.badge).then((value) {
+              FlutterClipboard.copy(
+                      controller.getBadgeBaseURL() + widget.kubeBadge.badge)
+                  .then((value) {
                 EasyLoading.showToast(
                   'Copied to Clipboard!',
                   duration: const Duration(seconds: 2),
@@ -102,7 +104,7 @@ class _BadgeSettingDialogState extends State<BadgeSettingDialog> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: SelectableText(
-              widget.kubeBadge.badge,
+              controller.getBadgeBaseURL() + widget.kubeBadge.badge,
               style: TextStyle(
                 fontSize: 14.0,
                 color: Colors.grey.shade700,

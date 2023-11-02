@@ -1,4 +1,4 @@
-.PHONY: all codegen crdgen run runui docker-build
+.PHONY: all codegen crdgen run runui docker-build test-coverage
 
 all: codegen run docker-build
 
@@ -17,3 +17,8 @@ runui:
 docker-build:
 	@read -p "Enter image version: " version; \
 	docker build -t neosu/kubebadges:$$version .
+
+test-coverage:
+	go test -coverpkg=./internal/... -coverprofile=coverage.out ./... 
+	go tool cover -func ./coverage.out
+	go tool cover -html=coverage.out

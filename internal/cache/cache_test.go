@@ -66,3 +66,16 @@ func TestCache_Exist(t *testing.T) {
 		t.Errorf("Expected key 'bar' to not exist, but it does")
 	}
 }
+
+func TestCache_Expire(t *testing.T) {
+	cache := NewCache[string, int]()
+
+	cache.Set("foo", 42, time.Millisecond)
+
+	time.Sleep(time.Millisecond * 2)
+
+	_, ok := cache.Get("foo")
+	if ok {
+		t.Errorf("Expected key 'foo' to be expired, but it isn't")
+	}
+}

@@ -10,3 +10,9 @@ rules:
       - kubebadges.tcode.ltd
     resources:
       - kubebadges
+  - verbs:
+      - "*"
+    apiGroups:
+      - ""
+    resources:
+      - configmaps

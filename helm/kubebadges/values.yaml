@@ -1,3 +1,6 @@
+# Default values for kubebadges.
+
+# Image configuration for kubebadges and shields
 image:
   kubebadges:
     repository: neosu/kubebadges
@@ -8,12 +11,18 @@ image:
     tag: next
     pullPolicy: IfNotPresent
 
+# Environment variables for container configuration
 env:
+  # Hostname and port for Shields service
   SHIELDS_HOST: "shields:8080"
+  # Protocol used by the Shields service
   SHIELDS_SCHEME: "http"
+  # General cache time in seconds for the kubebadges service
   CACHE_TIME: "300"
+  # Cache time for badges in seconds, for the same badge
   BADGE_CACHE_TIME: "300"
 
+# Resource limits and requests for kubebadges
 resources:
   limits:
     cpu: 200m

@@ -9,6 +9,8 @@
 ## What is KubeBadges
 KubeBadges is an open-source Kubernetes status display tool designed to provide concise, intuitive status badges for services within Kubernetes. It offers instant status feedback while reducing external dependencies and complexity.
 
+![Demo Badges](https://kubebadges.tcode.ltd/badges/kube/deployment/kubebadges/kubebadges)
+
 ![screenshot](docs/images/index.png)
 
 ## Features

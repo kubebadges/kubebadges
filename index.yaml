@@ -3,7 +3,17 @@ entries:
   kubebadges:
   - apiVersion: v2
     appVersion: 0.5.0
-    created: "2023-12-10T07:22:36.938030487Z"
+    created: "2023-12-10T07:58:57.020496443Z"
+    description: A Helm chart for Kubernetes
+    digest: 2acef1da6cefcde5cfe53fdda099c10d9856e83094adc4590715c7a8ad9bd7d7
+    name: kubebadges
+    type: application
+    urls:
+    - kubebadges-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 0.5.0
+    created: "2023-12-10T07:58:57.020239131Z"
     description: A Helm chart for Kubernetes
     digest: b009078cac7a1de675d0cf44d64642cec7f341b977d873c32facefbdf014d28b
     name: kubebadges
@@ -13,7 +23,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 0.5.0
-    created: "2023-12-10T07:22:36.937767364Z"
+    created: "2023-12-10T07:58:57.01999298Z"
     description: A Helm chart for Kubernetes
     digest: e8cc1b3941f6aad263ffc758561bf2069b078c80103ea0af841b9b0f308c8b6e
     name: kubebadges
@@ -23,7 +33,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 0.5.0
-    created: "2023-12-10T07:22:36.937488491Z"
+    created: "2023-12-10T07:58:57.019730688Z"
     description: A Helm chart for Kubernetes
     digest: bdac57cdeae02670e2cf05a4687b3e3a711d507d4562f8a8331d5b263d2dc837
     name: kubebadges
@@ -31,4 +41,4 @@ entries:
     urls:
     - kubebadges-0.1.0.tgz
     version: 0.1.0
-generated: "2023-12-10T07:22:36.93708766Z"
+generated: "2023-12-10T07:58:57.019334787Z"

@@ -38,6 +38,7 @@ jobs:
         run: |
           git fetch --depth=1 origin gh-pages
           git checkout gh-pages
+          pwd
           cp ./helm-repo/*.tgz .
           git rm -rf ./*
           helm repo index .

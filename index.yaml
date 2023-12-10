@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  kubebadges:
+  - apiVersion: v2
+    appVersion: 0.5.0
+    created: "2023-12-10T07:05:16.80911731Z"
+    description: A Helm chart for Kubernetes
+    digest: bdac57cdeae02670e2cf05a4687b3e3a711d507d4562f8a8331d5b263d2dc837
+    name: kubebadges
+    type: application
+    urls:
+    - kubebadges-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-12-10T07:05:16.808727702Z"

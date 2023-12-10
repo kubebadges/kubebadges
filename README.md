@@ -26,6 +26,12 @@ KubeBadges is an open-source Kubernetes status display tool designed to provide 
 kubectl apply -f https://raw.githubusercontent.com/kubebadges/kubebadges/main/manifests/install.yaml
 ```
 
+### Install with Helm
+```bash
+helm repo add kubebadges https://kubebadges.github.io/kubebadges
+helm install kubebadges kubebadges/kubebadges -n kubebadges --create-namespace
+```
+
 ### Verify KubeBadges is running
 ```bash
 kubectl get pods -n kubebadges

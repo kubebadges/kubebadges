@@ -1,0 +1,43 @@
+name: Release Helm Chart
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: '3.13.2'
+
+      - name: Package Helm Chart
+        run: |
+          helm package helm/kubebadges -d ./helm-repo
+
+      - name: Publish Helm Chart
+        run: |
+          git fetch --depth=1 origin gh-pages
+          git checkout gh-pages
+          git rm -rf ./*
+          mv ../helm-repo/*.tgz .
+          helm repo index .
+          git add ./*.tgz
+          git add index.yaml
+          git commit -m "Publish Helm Chart"
+          git push origin gh-pages

@@ -4,7 +4,7 @@ kind: Kustomization
 images:
   - name: neosu/kubebadges
     newName: neosu/kubebadges
-    newTag: v0.0.4
+    newTag: v0.0.5
   - name: shieldsio/shields
     newName: shieldsio/shields
     newTag: next

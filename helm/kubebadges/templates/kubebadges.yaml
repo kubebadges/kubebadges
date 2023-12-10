@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubebadges
-  namespace: kubebadges
+  namespace: {{ .Values.namespace | default "kubebadges" }}
   labels:
     app: kubebadges
 spec:
@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
         - name: kubebadges
-          image: neosu/kubebadges:v0.0.5
+          image: "{{ .Values.image.kubebadges.repository }}:{{ .Values.image.kubebadges.tag }}"
+          imagePullPolicy: {{ .Values.image.kubebadges.pullPolicy }}
           ports:
             - name: http-internal
               containerPort: 8090
@@ -28,20 +29,15 @@ spec:
               protocol: TCP
           env:
             - name: SHIELDS_HOST
-              value: shields:8080
+              value: {{ .Values.env.SHIELDS_HOST }}
             - name: SHIELDS_SCHEME
-              value: http
+              value: {{ .Values.env.SHIELDS_SCHEME }}
             - name: CACHE_TIME
-              value: "300"
+              value: {{ .Values.env.CACHE_TIME }}
             - name: BADGE_CACHE_TIME
-              value: "300"
+              value: {{ .Values.env.BADGE_CACHE_TIME }}
           resources:
-            limits:
-              cpu: 200m
-              memory: 256Mi
-            requests:
-              cpu: 10m
-              memory: 8Mi
+            {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -56,7 +52,6 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
-          imagePullPolicy: IfNotPresent
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       serviceAccountName: kubebadges

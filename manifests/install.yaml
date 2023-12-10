@@ -218,7 +218,7 @@ spec:
           value: "300"
         - name: BADGE_CACHE_TIME
           value: "300"
-        image: neosu/kubebadges:v0.0.4
+        image: neosu/kubebadges:v0.0.5
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3

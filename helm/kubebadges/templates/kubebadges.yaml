@@ -29,13 +29,13 @@ spec:
               protocol: TCP
           env:
             - name: SHIELDS_HOST
-              value: {{ .Values.env.SHIELDS_HOST }}
+              value: "{{ .Values.env.SHIELDS_HOST }}"
             - name: SHIELDS_SCHEME
-              value: {{ .Values.env.SHIELDS_SCHEME }}
+              value: "{{ .Values.env.SHIELDS_SCHEME }}"
             - name: CACHE_TIME
-              value: {{ .Values.env.CACHE_TIME }}
+              value: "{{ .Values.env.CACHE_TIME }}"
             - name: BADGE_CACHE_TIME
-              value: {{ .Values.env.BADGE_CACHE_TIME }}
+              value: "{{ .Values.env.BADGE_CACHE_TIME }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:

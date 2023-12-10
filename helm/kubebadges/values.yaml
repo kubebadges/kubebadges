@@ -1,0 +1,23 @@
+image:
+  kubebadges:
+    repository: neosu/kubebadges
+    tag: v0.0.5
+    pullPolicy: IfNotPresent
+  shields:
+    repository: shieldsio/shields
+    tag: next
+    pullPolicy: IfNotPresent
+
+env:
+  SHIELDS_HOST: "shields:8080"
+  SHIELDS_SCHEME: "http"
+  CACHE_TIME: "300"
+  BADGE_CACHE_TIME: "300"
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 10m
+    memory: 8Mi

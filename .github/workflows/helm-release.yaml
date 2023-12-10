@@ -2,8 +2,6 @@ name: Release Helm Chart
 
 on:
   push:
-    branches:
-      - main
     tags:
       - '*'
 

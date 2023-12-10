@@ -30,12 +30,16 @@ jobs:
         run: |
           helm package helm/kubebadges -d ./helm-repo
 
+      - name: List packaged Helm Charts
+        run: |
+          ls -l ./helm-repo
+
       - name: Publish Helm Chart
         run: |
           git fetch --depth=1 origin gh-pages
           git checkout gh-pages
+          cp ./helm-repo/*.tgz .
           git rm -rf ./*
-          mv ../helm-repo/*.tgz .
           helm repo index .
           git add ./*.tgz
           git add index.yaml
